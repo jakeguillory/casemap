@@ -30,9 +30,13 @@ export function CaseProvider({children}) {
 
   async function fetchCaseById(id) {
     try {
+      const response = await databases.getDocument(
+        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+        process.env.EXPO_PUBLIC_APPWRITE_TABLE_ID,
+        id
+      )
 
-  
-      return response 
+        return response 
     } catch (error) {
       console.log(error.message)
     }
@@ -58,7 +62,11 @@ export function CaseProvider({children}) {
 
   async function deleteCase(id) {
     try {
-      
+      await databases.deleteDocument(
+        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+        process.env.EXPO_PUBLIC_APPWRITE_TABLE_ID,
+        id
+      )
     } catch (error) {
       console.log(error.message)
     }
@@ -79,6 +87,10 @@ export function CaseProvider({children}) {
                 setCases((prevCases) => [...prevCases, payload])
             }
 
+            if (events[0].includes('delete')) {
+                  setCases((prevCases) => prevCases.filter((singleCase) => singleCase.$id !== payload.$id))
+            }
+
         })
     } else {
         setCases([])
@@ -92,7 +104,7 @@ export function CaseProvider({children}) {
 
   return (
     <CaseContext.Provider 
-      value={{ cases, fetchCases, fetchCasesById, createCase, deleteCase }}
+      value={{ cases, fetchCases, fetchCaseById, createCase, deleteCase }}
     >
       {children}
     </CaseContext.Provider>

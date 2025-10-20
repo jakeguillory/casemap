@@ -1,14 +1,17 @@
 import { StyleSheet, FlatList, Pressable } from 'react-native'
 import { useCase } from '../../hooks/useCase'
 import { Colors } from '../../constants/Colors'
+import { useRouter } from 'expo-router'
 
 import Spacer from "../../components/Spacer"
 import ThemedText from "../../components/ThemedText"
 import ThemedView from "../../components/ThemedView"
 import ThemedCard from "../../components/ThemedCard"
 
+
 const Cases = () => {
   const { cases } = useCase()
+  const router = useRouter()
 
   return (
     <ThemedView style={styles.container} safe={true}>
@@ -24,10 +27,10 @@ const Cases = () => {
         keyExtractor={(item) => item.$id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <Pressable>
+          <Pressable onPress={() => router.push(`/cases/${item.$id}`)}>
             <ThemedCard style={styles.card}>
               <ThemedText style={styles.title}>{item.title}</ThemedText>
-              <ThemedText>Written by {item.author}</ThemedText>
+              <ThemedText>Created by {item.author}</ThemedText>
             </ThemedCard>
           </Pressable>
         )}

@@ -58,7 +58,7 @@ const Create = () => {
 
         <ThemedTextInput
           style={styles.input}
-          placeholder="Author"
+          placeholder="Creator"
           value={author}
           onChangeText={setAuthor}
         />
