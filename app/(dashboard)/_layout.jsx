@@ -30,6 +30,16 @@ export default function DashboardLayout() {
           )}}
         />
         <Tabs.Screen 
+          name="map"
+          options={{ title: "Map", tabBarIcon: ({ focused }) => (
+            <Ionicons 
+              size={24} 
+              name={focused ? 'globe': 'globe-outline'} 
+              color={focused ? theme.iconColorFocused : theme.iconColor} 
+            />
+          )}} 
+        />
+        <Tabs.Screen 
           name="cases"
           options={{ title: "Cases", tabBarIcon: ({ focused }) => (
             <Ionicons 
