@@ -46,6 +46,7 @@ const Create = () => {
         <ThemedText title={true} style={styles.heading}>
           Add a New Case
         </ThemedText>
+
         <Spacer />
 
         <ThemedTextInput
@@ -62,6 +63,7 @@ const Create = () => {
           value={author}
           onChangeText={setAuthor}
         />
+        
         <Spacer />
 
         <ThemedTextInput

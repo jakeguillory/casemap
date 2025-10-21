@@ -1,16 +1,15 @@
-import { StyleSheet, useColorScheme } from 'react-native'
+import { StyleSheet } from 'react-native'
 import ThemedView from '../../components/ThemedView'
 import ThemedText from '../../components/ThemedText'
 import Spacer from '../../components/Spacer'
 import { Colors } from '../../constants/Colors'
+import Graph from '../../components/Graph'
 
 
 
 
 const Map = () => {
 
-    const colorScheme = useColorScheme()
-    const theme = Colors[colorScheme] ?? Colors.light
 
   return (
 
@@ -23,6 +22,8 @@ const Map = () => {
       </ThemedText>
 
       <Spacer />
+
+      <Graph />
 
     </ThemedView>
   )
