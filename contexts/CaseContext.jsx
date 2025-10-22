@@ -18,43 +18,51 @@ export function CaseProvider({children}) {
   const [ links, setLinks ] = useState([])
   const [ loading, setLoading ] = useState(true)
 
+  // Environment Variable Aliases
+  const DB_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
+  const CASES_ID = process.env.EXPO_PUBLIC_APPWRITE_CASES_ID
+  const NODES_ID = process.env.EXPO_PUBLIC_APPWRITE_NODES_ID
+  const LINKS_ID = process.env.EXPO_PUBLIC_APPWRITE_LINKS_ID
+
+// --------------------- CASES ------------------------------
+
   async function fetchCases() {
     try {
       const response = await databases.listDocuments(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_CASES_ID,
+        DB_ID,
+        DB_CASES,
         [
             Query.equal('userId', user.$id)
         ]
       )
 
       setCases(response.documents)
-      console.log(response.documents)
+      //console.log(response.documents)
 
     } catch (error) {
-      console.error(error.message)
+      console.error("fetchCases: ",error.message)
     }
   }
 
   async function fetchCaseById(id) {
     try {
       const response = await databases.getDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_CASES_ID,
+        DB_ID,
+        CASES_ID,
         id
       )
 
-        return response 
+      return response 
     } catch (error) {
-      console.log(error.message)
+      console.log("fetchCaseById: ", error.message)
     }
   }
 
   async function createCase(data) {
     try {
-      const newCase = await databases.createDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_CASES_ID,
+      await databases.createDocument(
+        DB_ID,
+        CASES_ID,
         ID.unique(),
         {...data, userId: user.$id},
         [
@@ -64,59 +72,95 @@ export function CaseProvider({children}) {
         ]
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("createCase: ", error.message)
     }
   }
 
+  async function updateCase(id, data) {
+    try {
+      await databases.updateDocument(
+        DB_ID,
+        CASES_ID,
+        id,
+        data,
+      )
+
+    } catch (error) {
+      console.error("updateCase: ", error.message)
+    }
+
+  }
+
+  // ------ Cascading Delete: remove nodes and links first-----
   async function deleteCase(id) {
     try {
+      // Fetch and delete nodes and links first
+      // May need some check here in case there are no associated nodes and links
+      const [ nodesRes, linksRes ] = await Promise.all([
+        databases.listDocuments(DB_ID, NODES_ID, [Query.equal("caseId", id)]),
+        databases.listDocuments(DB_ID, LINKS_ID, [Query.equal("caseId", id)]),
+      ])
+
+      // Can probably use already defined deleteNode and deleteLink functions here
+      await Promise.all([
+        ...nodesRes.documents.map((node) =>
+        databases.deleteDocument(DB_ID, NODES_ID, node.$id)
+        ),
+        ...linksRes.documents.map((link) =>
+        databases.deleteDocument(DB_ID, LINKS_ID, link.$id)
+        ),
+      ])
+
+      // Delete the case
       await databases.deleteDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_CASES_ID,
+        DB_ID,
+        CASES_ID,
         id
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("deleteCase: ", error.message)
     }
   }
 
+ // ----------------- GRAPH DATA ---------------------------
   // Fetches Nodes and Links for given Case ID
   async function fetchGraphData(caseId) {
     try {
-      const nodesResponse = await databases.listDocuments(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_NODES_ID,
+      const nodesRes = await databases.listDocuments(
+        DB_ID,
+        NODES_ID,
         [
             Query.equal('caseId', caseId)
         ]
       ) 
 
-      const linksResponse = await databases.listDocuments(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_Links_ID,
+      const linksRes = await databases.listDocuments(
+        DB_ID,
+        LINKS_ID,
         [
             Query.equal('caseId', caseId)
         ]
       ) 
 
-      setNodes(nodesResponse.documents)
-      setLinks(LinksResponse.documents)
+      setNodes(nodesRes.documents)
+      setLinks(linksRes.documents)
 
-      console.log(nodesResponse.documents, linksResponse.documents)
+      //console.log(nodesRes.documents, linksRes.documents)
 
     } catch (error) {
-      console.error(error.message)
+      console.error("fetchGraphData: ", error.message)
     }
   }
 
+   // ----------------- NODES ---------------------------
   async function createNode(data) {
 
     if (!selectedCase) return // Should maybe put an error message here
 
     try {
-      const newNode = await databases.createDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_NODES_ID,
+      await databases.createDocument(
+        DB_ID,
+        NODES_ID,
         ID.unique(),
         {...data, userId: user.$id, caseID: selectedCase.$id},
         [
@@ -126,30 +170,41 @@ export function CaseProvider({children}) {
         ]
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("createNode: ", error.message)
     }
   } 
+
+  async function updateNode(id, data) {
+
+    try {
+      await databases.updateDocument(DB_ID, NODES_ID, id, data)
+    } catch (error) {
+      console.error("updateNode: ", error.message)
+    }
+  }
 
   async function deleteNode(id) {
     try {
       await databases.deleteDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_NODES_ID,
+        DB_ID,
+        NODES_ID,
         id
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("deleteNode: ", error.message)
     }
   }
+
+   // ----------------- LINKS ---------------------------
 
   async function createLink(data) {
 
     if (!selectedCase) return // Should maybe put an error message here
 
     try {
-      const newLink = await databases.createDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_LINKS_ID,
+      await databases.createDocument(
+        DB_ID,
+        LINKS_ID,
         ID.unique(),
         {...data, userId: user.$id, caseID: selectedCase.$id},
         [
@@ -159,63 +214,85 @@ export function CaseProvider({children}) {
         ]
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("createLink: ", error.message)
     }
   } 
+
+  async function updateLink(id, data) {
+
+    try {
+      await databases.updateDocument(DB_ID, LINKS_ID, id, data)
+    } catch (error) {
+      console.error("updateLink: ", error.message)
+    }
+  }
 
   async function deleteLink(id) {
     try {
       await databases.deleteDocument(
-        process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.EXPO_PUBLIC_APPWRITE_LINKS_ID,
+        DB_ID,
+        LINKS_ID,
         id
       )
     } catch (error) {
-      console.log(error.message)
+      console.log("deleteLink: ", error.message)
     }
   }
 
-  // Need to add functionality for Deleting all Nodes and Links When Deleting Cases (Cascading)
-  // Even when deleting users for that matter
+     // ----------------- REALTIME SUBSCRIPTIONS ---------------------------
 
-  // Need to add Update functions 
-
-  // Need to add realtime for creating and deleting Nodes and Links
   useEffect(() => {
+    if (!user) return
 
-    let unsubscribe
-    const channel = `databases.${process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID}.collections.${process.env.EXPO_PUBLIC_APPWRITE_CASES_ID}.documents`
+    fetchCases()
 
-    if (user) {
-        fetchCases()
+    const caseChannel = `databases.${DB_ID}.collections.${CASES_ID}.documents`
+    const nodeChannel = `databases.${DB_ID}.collections.${NODES_ID}.documents`
+    const linkChannel = `databases.${DB_ID}.collections.${LINKS_ID}.documents`
 
-        unsubscribe = client.subscribe(channel, (response) => { 
-            const { payload, events } = response
+    const unsubCases = client.subscribe(caseChannel, ({ events, payload }) => {
+      if (events.includes("databases.*.collections.*.documents.*.create"))
+        setCases((prev) => [...prev, payload])
+      if (events.includes("databases.*.collections.*.documents.*.update"))
+        setCases((prev) =>
+          prev.map((c) => (c.$id === payload.$id ? payload : c))
+        )
+      if (events.includes("databases.*.collections.*.documents.*.delete"))
+        setCases((prev) => prev.filter((c) => c.$id !== payload.$id))
+    })
 
-            if (events[0].includes('create')) {
-                setCases((prevCases) => [...prevCases, payload])
-            }
+    const unsubNodes = client.subscribe(nodeChannel, ({ events, payload }) => {
+      if (!selectedCase || payload.caseId !== selectedCase.$id) return
+      if (events.includes("create"))
+        setNodes((prev) => [...prev, payload])
+      if (events.includes("update"))
+        setNodes((prev) => prev.map((n) => (n.$id === payload.$id ? payload : n)))
+      if (events.includes("delete"))
+        setNodes((prev) => prev.filter((n) => n.$id !== payload.$id))
+    })
 
-            if (events[0].includes('delete')) {
-                  setCases((prevCases) => prevCases.filter((singleCase) => singleCase.$id !== payload.$id))
-            }
-
-        })
-    } else {
-        setCases([])
-    }
+    const unsubLinks = client.subscribe(linkChannel, ({ events, payload }) => {
+      if (!selectedCase || payload.caseId !== selectedCase.$id) return
+      if (events.includes("create"))
+        setLinks((prev) => [...prev, payload])
+      if (events.includes("update"))
+        setLinks((prev) => prev.map((l) => (l.$id === payload.$id ? payload : l)))
+      if (events.includes("delete"))
+        setLinks((prev) => prev.filter((l) => l.$id !== payload.$id))
+    })
 
     return () => {
-        if (unsubscribe) unsubscribe()
+      unsubCases()
+      unsubNodes()
+      unsubLinks()
     }
-
-  }, [user])
+  }, [user, selectedCase])
 
   return (
     <CaseContext.Provider 
       value={{ cases, selectedCase, setSelectedCase, fetchCases, fetchCaseById,
-               createCase, deleteCase, nodes, links, createNode, createLink,
-               deleteNode, deleteLink, fetchGraphData, loading }}
+               createCase, updateCase, deleteCase, nodes, links, createNode, updateNode,
+               deleteNode, createLink, updateLink, deleteLink, fetchGraphData, loading }}
     >
       {children}
     </CaseContext.Provider>

@@ -1,11 +1,6 @@
 import React,{ createContext, useState } from "react";
 
 
-
-
-
-
-
 export const GraphContext = createContext()
 
 export function GraphProvider({children}) {
