@@ -30,7 +30,7 @@ export function CaseProvider({children}) {
     try {
       const response = await databases.listDocuments(
         DB_ID,
-        DB_CASES,
+        CASES_ID,
         [
             Query.equal('userId', user.$id)
         ]
