@@ -48,20 +48,57 @@ const CaseDetails = () => {
 
   return (
     <ThemedView safe={true} style={styles.container}>
+
       <ThemedCard style={styles.card}>
+
         <ThemedText style={styles.title}>{caseDetail.title}</ThemedText>
-        <ThemedText>Created by {caseDetail.author}</ThemedText>
+
         <Spacer />
 
         <ThemedText title={true}>Case description:</ThemedText>
+
         <Spacer height={10} />
 
         <ThemedText>{caseDetail.description}</ThemedText>
+
       </ThemedCard>
+
+      <Spacer />
+
+      
+      <FlatList
+        data={cases}
+        keyExtractor={(item) => item.$id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => {
+                setSelectedCase(item)
+                router.push(`/cases/${item.$id}`)
+              }}>
+            <ThemedCard style={styles.card}>
+              <ThemedText style={styles.title}>{item.title}</ThemedText>
+            </ThemedCard>
+          </Pressable>
+        )}
+      />
+
+      <Spacer height={10} />
+      
+      <ThemedButton onPress={() => router.push('/createNode')} style={{alignSelf: "center"}}>
+        <Text style={{ color: '#f2f2f2' }}>Add a New Node</Text>
+      </ThemedButton>
+
+      <Spacer height={20} />
+
+      <ThemedButton onPress={() => router.push('/createLink')} style={{alignSelf: "center"}}>
+        <Text style={{ color: '#f2f2f2' }}>Add a New Link</Text>
+      </ThemedButton>
+
 
       <ThemedButton onPress={handleDelete} style={styles.delete}>
         <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Case</Text>
       </ThemedButton>
+
     </ThemedView>
   )
 }

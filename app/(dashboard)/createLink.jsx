@@ -10,30 +10,34 @@ import ThemedTextInput from "../../components/ThemedTextInput"
 import ThemedButton from '../../components/ThemedButton'
 import Spacer from '../../components/Spacer'
 
-const Create = () => {
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [description, setDescription] = useState("")
-  const [loading, setLoading] = useState(false)
 
-  const { createCase } = useCase()
+const CreateLink = () => {
+  const [ sourceNodeId, setSourceNodeId ] = useState("")
+  const [ targetNodeId, setTargetNodeId ] = useState("")
+  const [ relationship, setRelationship ] = useState("")
+  const [ notes, setNotes ] = useState("")
+
+  const { createLink, loading, setLoading, selectedCase, setSelectedCase } = useCase()
   const router = useRouter()
 
   async function handleSubmit() {
-    if (!title.trim() || !author.trim() || !description.trim()) return
+
+    // Check the items that are labeled as "required" by database
+    if (!sourceNodeId.trim() || !targetNodeId.trim()) return // Possibly display error message and redirect
 
     setLoading(true)
     
-    // create the book
-    await createCase({ title, author, description })
+    // create the link
+    await createLink({ sourceNodeId, targetNodeId, relationship, notes })
 
     // reset fields
-    setTitle("")
-    setAuthor("")
-    setDescription("")
+    setSourceNodeId("")
+    setTargetNodeId("")
+    setRelationship("")
+    setNotes("")
 
     // redirect
-    router.replace("/cases")
+    router.replace(`/cases/${selectedCase.$id}`)
 
     // reset loading state
     setLoading(false) 
@@ -44,40 +48,51 @@ const Create = () => {
       <ThemedView style={styles.container}>
 
         <ThemedText title={true} style={styles.heading}>
-          Add a New Case
+          Add a New Link
         </ThemedText>
 
         <Spacer />
 
         <ThemedTextInput
           style={styles.input}
-          placeholder="Case Title"
-          value={title}
-          onChangeText={setTitle}
+          placeholder="Source Node ID"
+          value={sourceNodeId}
+          onChangeText={setSourceNodeId}
         />
+
         <Spacer />
 
         <ThemedTextInput
           style={styles.input}
-          placeholder="Creator"
-          value={author}
-          onChangeText={setAuthor}
+          placeholder="Target Node ID"
+          value={targetNodeId}
+          onChangeText={setTargetNodeId}
         />
-        
+
+        <Spacer />
+
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="Relationship"
+          value={relationship}
+          onChangeText={setRelationship}
+        />
+
         <Spacer />
 
         <ThemedTextInput
           style={styles.multiline}
-          placeholder="Case Description"
-          value={description}
-          onChangeText={setDescription}
+          placeholder="Notes"
+          value={notes}
+          onChangeText={setNotes}
           multiline={true}
         />
+
         <Spacer />
 
         <ThemedButton onPress={handleSubmit} disabled={loading}>
           <Text style={{ color: '#fff' }}>
-            {loading ? "Saving..." : "Create Case"}
+            {loading ? "Saving..." : "Create Link"}
           </Text>
         </ThemedButton>
 
@@ -86,7 +101,7 @@ const Create = () => {
   )
 }
 
-export default Create
+export default CreateLink
 
 const styles = StyleSheet.create({
   container: {

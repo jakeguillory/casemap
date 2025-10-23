@@ -16,7 +16,7 @@ export function CaseProvider({children}) {
   const [ selectedCase, setSelectedCase ] = useState(null)
   const [ nodes, setNodes ] = useState([])
   const [ links, setLinks ] = useState([])
-  const [ loading, setLoading ] = useState(true)
+  const [ loading, setLoading ] = useState(false)
 
   // Environment Variable Aliases
   const DB_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID
@@ -142,8 +142,12 @@ export function CaseProvider({children}) {
         ]
       ) 
 
+      /* Not sure why we are resetting nodes and links here
       setNodes(nodesRes.documents)
       setLinks(linksRes.documents)
+      */
+
+      return [ nodesRes.documents, linksRes.documents ]
 
       //console.log(nodesRes.documents, linksRes.documents)
 
@@ -162,7 +166,7 @@ export function CaseProvider({children}) {
         DB_ID,
         NODES_ID,
         ID.unique(),
-        {...data, userId: user.$id, caseID: selectedCase.$id},
+        {...data, userId: user.$id, caseId: selectedCase.$id},
         [
             Permission.read(Role.user(user.$id)),
             Permission.update(Role.user(user.$id)),
@@ -206,7 +210,7 @@ export function CaseProvider({children}) {
         DB_ID,
         LINKS_ID,
         ID.unique(),
-        {...data, userId: user.$id, caseID: selectedCase.$id},
+        {...data, userId: user.$id, caseId: selectedCase.$id},
         [
             Permission.read(Role.user(user.$id)),
             Permission.update(Role.user(user.$id)),
@@ -292,7 +296,7 @@ export function CaseProvider({children}) {
     <CaseContext.Provider 
       value={{ cases, selectedCase, setSelectedCase, fetchCases, fetchCaseById,
                createCase, updateCase, deleteCase, nodes, links, createNode, updateNode,
-               deleteNode, createLink, updateLink, deleteLink, fetchGraphData, loading }}
+               deleteNode, createLink, updateLink, deleteLink, fetchGraphData, loading, setLoading }}
     >
       {children}
     </CaseContext.Provider>

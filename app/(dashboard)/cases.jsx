@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, Pressable } from 'react-native'
+import { StyleSheet, FlatList, Pressable, Text } from 'react-native'
 import { useCase } from '../../hooks/useCase'
 import { Colors } from '../../constants/Colors'
 import { useRouter } from 'expo-router'
@@ -7,30 +7,46 @@ import Spacer from "../../components/Spacer"
 import ThemedText from "../../components/ThemedText"
 import ThemedView from "../../components/ThemedView"
 import ThemedCard from "../../components/ThemedCard"
+import ThemedButton from '../../components/ThemedButton'
+import { useUser } from '../../hooks/useUser'
 
 
 const Cases = () => {
-  const { cases } = useCase()
+  const { user } = useUser()
+  const { cases, setSelectedCase } = useCase()
   const router = useRouter()
+
+
+
 
   return (
     <ThemedView style={styles.container} safe={true}>
 
       <Spacer />
+      
       <ThemedText title={true} style={styles.heading}>
-        Your Case List
+        { user.email } Case List
       </ThemedText>
 
       <Spacer />
+
+      <ThemedButton onPress={() => router.push('/createCase')} style={{alignSelf: "center"}}>
+        <Text style={{ color: '#f2f2f2' }}>Add a New Case</Text>
+      </ThemedButton>
+
+      <Spacer />
+
       <FlatList
         data={cases}
         keyExtractor={(item) => item.$id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <Pressable onPress={() => router.push(`/cases/${item.$id}`)}>
+          <Pressable onPress={() => {
+                setSelectedCase(item)
+                router.push(`/cases/${item.$id}`)
+              }}>
             <ThemedCard style={styles.card}>
               <ThemedText style={styles.title}>{item.title}</ThemedText>
-              <ThemedText>Created by {item.author}</ThemedText>
             </ThemedCard>
           </Pressable>
         )}

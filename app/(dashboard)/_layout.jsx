@@ -29,6 +29,7 @@ export default function DashboardLayout() {
             />
           )}}
         />
+
         <Tabs.Screen 
           name="map"
           options={{ title: "Map", tabBarIcon: ({ focused }) => (
@@ -39,6 +40,7 @@ export default function DashboardLayout() {
             />
           )}} 
         />
+
         <Tabs.Screen 
           name="cases"
           options={{ title: "Cases", tabBarIcon: ({ focused }) => (
@@ -49,16 +51,22 @@ export default function DashboardLayout() {
             />
           )}} 
         />
+
         <Tabs.Screen 
-          name="create"
-          options={{ title: "Create", tabBarIcon: ({ focused }) => (
-            <Ionicons 
-              size={24} 
-              name={focused ? 'create': 'create-outline'} 
-              color={focused ? theme.iconColorFocused : theme.iconColor} 
-            />
-          )}} 
+          name="createCase"
+          options={{ href: null }}
         />
+
+        <Tabs.Screen 
+          name="createNode"
+          options={{ href: null }}
+        />
+
+        <Tabs.Screen 
+          name="createLink"
+          options={{ href: null }}
+        />
+
         <Tabs.Screen
           name="cases/[id]"
           options={{ href: null }}
