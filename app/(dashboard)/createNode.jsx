@@ -9,6 +9,7 @@ import ThemedText from "../../components/ThemedText"
 import ThemedTextInput from "../../components/ThemedTextInput"
 import ThemedButton from '../../components/ThemedButton'
 import Spacer from '../../components/Spacer'
+import ThemedSelect from '../../components/ThemedSelect'
 
 
 const CreateNode = () => {
@@ -16,15 +17,15 @@ const CreateNode = () => {
   const [ type, setType ] = useState(null)
   const [ notes, setNotes ] = useState("")
 
-  const { createNode, loading, setLoading, selectedCase, setSelectedCase } = useCase()
+  const { createNode, loading, setLoading, selectedCase } = useCase()
   const router = useRouter()
 
-  const TYPE = {
-    PERSON: 'person',
-    ORGANIZATION: 'organization',
-    EVENT: 'event',
-    ASSER: 'asset',
-  }
+  const typeOptions = [
+    { label: 'Person', value: 'person' },
+    { label: 'Organization', value: 'organization' },
+    { label: 'Event', value: 'event' },
+    { label: 'Asset', value: 'asset' },
+  ]
 
   async function handleSubmit() {
 
@@ -50,7 +51,7 @@ const CreateNode = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-      <ThemedView style={styles.container}>
+      <ThemedView style={styles.container} safe={true}>
 
         <ThemedText title={true} style={styles.heading}>
           Add a New Node
@@ -67,11 +68,11 @@ const CreateNode = () => {
 
         <Spacer />
 
-        <ThemedTextInput
-          style={styles.input}
-          placeholder="Type"
+        <ThemedSelect 
+          items={typeOptions}
           value={type}
-          onChangeText={setType}
+          onValueChange={setType}
+          
         />
 
         <Spacer />

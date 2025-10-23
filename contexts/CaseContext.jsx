@@ -142,12 +142,9 @@ export function CaseProvider({children}) {
         ]
       ) 
 
-      /* Not sure why we are resetting nodes and links here
       setNodes(nodesRes.documents)
       setLinks(linksRes.documents)
-      */
-
-      return [ nodesRes.documents, linksRes.documents ]
+    
 
       //console.log(nodesRes.documents, linksRes.documents)
 

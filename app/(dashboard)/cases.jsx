@@ -30,12 +30,6 @@ const Cases = () => {
 
       <Spacer />
 
-      <ThemedButton onPress={() => router.push('/createCase')} style={{alignSelf: "center"}}>
-        <Text style={{ color: '#f2f2f2' }}>Add a New Case</Text>
-      </ThemedButton>
-
-      <Spacer />
-
       <FlatList
         data={cases}
         keyExtractor={(item) => item.$id}
@@ -51,6 +45,12 @@ const Cases = () => {
           </Pressable>
         )}
       />
+
+      <Spacer />
+
+      <ThemedButton onPress={() => router.push('/createCase')} style={{alignSelf: "center"}}>
+        <Text style={{ color: '#f2f2f2' }}>Add a New Case</Text>
+      </ThemedButton>
 
     </ThemedView>
   )

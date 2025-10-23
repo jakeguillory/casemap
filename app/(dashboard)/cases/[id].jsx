@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native"
+import { StyleSheet, Text, FlatList } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
@@ -18,8 +18,10 @@ const CaseDetails = () => {
   const [ caseDetail, setCaseDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { fetchCaseById, deleteCase } = useCase()
+  const { fetchCaseById, deleteCase, fetchGraphData, nodes, links, setSelectedCase } = useCase()
   const router = useRouter()
+
+
 
   const handleDelete = async () => {
     await deleteCase(id)
@@ -31,11 +33,15 @@ const CaseDetails = () => {
     async function loadCase() {
       const caseData = await fetchCaseById(id)
       setCaseDetail(caseData)
+
     }
 
     loadCase()
+    fetchGraphData(id)
 
-    return () => setCaseDetail(null)
+    return () => {
+      setCaseDetail(null)
+    }
   }, [id])
 
   if (!caseDetail) {
@@ -53,7 +59,7 @@ const CaseDetails = () => {
 
         <ThemedText style={styles.title}>{caseDetail.title}</ThemedText>
 
-        <Spacer />
+        <Spacer height={20}/>
 
         <ThemedText title={true}>Case description:</ThemedText>
 
@@ -65,24 +71,36 @@ const CaseDetails = () => {
 
       <Spacer />
 
-      
       <FlatList
-        data={cases}
+        data={nodes}
         keyExtractor={(item) => item.$id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <Pressable onPress={() => {
-                setSelectedCase(item)
-                router.push(`/cases/${item.$id}`)
-              }}>
+
             <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.title}</ThemedText>
+              <ThemedText style={styles.title}>{item.label}</ThemedText>
             </ThemedCard>
-          </Pressable>
+
         )}
       />
 
-      <Spacer height={10} />
+      <Spacer />
+
+      <FlatList
+        data={links}
+        keyExtractor={(item) => item.$id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+
+            <ThemedCard style={styles.card}>
+              <ThemedText style={styles.title}>{item.relationship}</ThemedText>
+            </ThemedCard>
+
+        )}
+      />
+
+
+      <Spacer height={0} />
       
       <ThemedButton onPress={() => router.push('/createNode')} style={{alignSelf: "center"}}>
         <Text style={{ color: '#f2f2f2' }}>Add a New Node</Text>
