@@ -1,4 +1,4 @@
-import { StyleSheet, Text, FlatList, View, Pressable } from "react-native"
+import { StyleSheet, Text, FlatList, View } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
@@ -13,39 +13,36 @@ import ThemedCard from "../../../components/ThemedCard"
 import ThemedLoader from "../../../components/ThemedCard"
 
 
-const CaseDetails = () => {
+const NodeDetails = () => {
 
-  const [ caseDetail, setCaseDetail ] = useState(null)
+  const [ nodeDetail, setNodeDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { fetchCaseById, deleteCase, fetchGraphData, nodes, links, setSelectedCase } = useCase()
+  const { links, fetchNodeById, deleteNode } = useCase()
   const router = useRouter()
 
 
 
   const handleDelete = async () => {
-    await deleteCase(id)
-    setCaseDetail(null)
-    router.replace('/cases')
+    await deleteNode(id)
+    setNodeDetail(null)
+    router.replace('/cases/[id]')
   }
 
   useEffect(() => {
-    async function loadCase() {
-      const caseData = await fetchCaseById(id)
-      setCaseDetail(caseData)
-      //setSelectedCase(caseData)
+    async function loadNode() {
+      const nodeData = await fetchNodeById(id)
+      setNodeDetail(nodeData)
     }
 
-    loadCase()
-    fetchGraphData(id)
+    loadNode()
 
     return () => {
-      setCaseDetail(null)
-      //setSelectedCase(null)
+      setNodeDetail(null)
     }
   }, [id])
 
-  if (!caseDetail) {
+  if (!nodeDetail) {
     return (
       <ThemedView safe={true} style={styles.container}>
         <ThemedLoader />
@@ -56,38 +53,36 @@ const CaseDetails = () => {
   return (
     <ThemedView safe={true} style={styles.container}>
 
-      <View>
-        <ThemedCard style={styles.card}>
+      <ThemedCard style={styles.card}>
 
-          <ThemedText style={styles.title}>{caseDetail.title}</ThemedText>
+        <ThemedText style={styles.title}>{nodeDetail.label}</ThemedText>
 
-          <Spacer height={20}/>
+        <Spacer height={20}/>
 
-          <ThemedText title={true}>Case description:</ThemedText>
+        <ThemedText title={true}>Type:</ThemedText>
 
-          <Spacer height={10} />
+        <Spacer height={10} />
 
-          <ThemedText>{caseDetail.description}</ThemedText>
+        <ThemedText>{nodeDetail.type}</ThemedText>
 
-        </ThemedCard>
-      </View>
+        <Spacer height={10} />
+
+        <ThemedText>{nodeDetail.notes}</ThemedText>
+
+      </ThemedCard>
 
       <Spacer />
 
+
       <FlatList
-        data={nodes}
+        data={links}
         keyExtractor={(item) => item.$id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-            <Pressable onPress={() => {
-                  router.push(`/nodes/${item.$id}`)
-                }}>
 
             <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.label}</ThemedText>
+              <ThemedText style={styles.title}>{item.relationship}</ThemedText>
             </ThemedCard>
-
-          </Pressable>
 
         )}
       />
@@ -98,15 +93,15 @@ const CaseDetails = () => {
       <View style={styles.buttonContainer}>
       
         <ThemedButton onPress={() => router.push('/createNode')} style={styles.containedButton}>
-          <Text style={{ color: '#f2f2f2' }}>New Node</Text>
+          <Text style={{ color: '#f2f2f2' }}>Add a New Node</Text>
         </ThemedButton>
 
         <ThemedButton onPress={() => router.push('/createLink')} style={styles.containedButton}>
-          <Text style={{ color: '#f2f2f2' }}>New Link</Text>
+          <Text style={{ color: '#f2f2f2' }}>Add a New Link</Text>
         </ThemedButton>
 
         <ThemedButton onPress={handleDelete} style={[styles.delete, styles.containedButton]}>
-          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Case</Text>
+          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Node</Text>
         </ThemedButton>
 
       </View>
@@ -115,7 +110,7 @@ const CaseDetails = () => {
   )
 }
 
-export default CaseDetails
+export default NodeDetails
 
 const styles = StyleSheet.create({
   container: {
@@ -126,10 +121,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    //gap: 10,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    //alignSelf: 'center',
+    gap: 10,
+    alignSelf: 'center',
   },
   containedButton: {
     paddingVertical: 20,

@@ -175,6 +175,20 @@ export function CaseProvider({children}) {
     }
   } 
 
+  async function fetchNodeById(id) {
+    try {
+      const response = await databases.getDocument(
+        DB_ID,
+        NODES_ID,
+        id
+      )
+
+      return response 
+    } catch (error) {
+      console.log("fetchCaseById: ", error.message)
+    }
+  }
+
   async function updateNode(id, data) {
 
     try {
@@ -292,7 +306,7 @@ export function CaseProvider({children}) {
   return (
     <CaseContext.Provider 
       value={{ cases, selectedCase, setSelectedCase, fetchCases, fetchCaseById,
-               createCase, updateCase, deleteCase, nodes, links, createNode, updateNode,
+               createCase, updateCase, deleteCase, nodes, links, createNode, fetchNodeById, updateNode,
                deleteNode, createLink, updateLink, deleteLink, fetchGraphData, loading, setLoading }}
     >
       {children}

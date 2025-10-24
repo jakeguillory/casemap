@@ -71,6 +71,11 @@ export default function DashboardLayout() {
           name="cases/[id]"
           options={{ href: null }}
         />
+
+        <Tabs.Screen
+          name="nodes/[id]"
+          options={{ href: null }}
+        />
       </Tabs>
     </UserOnly>
   )
