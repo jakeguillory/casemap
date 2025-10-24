@@ -264,21 +264,21 @@ export function CaseProvider({children}) {
 
     const unsubNodes = client.subscribe(nodeChannel, ({ events, payload }) => {
       if (!selectedCase || payload.caseId !== selectedCase.$id) return
-      if (events.includes("create"))
+      if (events.some(e => e.includes(".create")))
         setNodes((prev) => [...prev, payload])
-      if (events.includes("update"))
+      if (events.some(e => e.includes(".update")))
         setNodes((prev) => prev.map((n) => (n.$id === payload.$id ? payload : n)))
-      if (events.includes("delete"))
+      if (events.some(e => e.includes(".delete")))
         setNodes((prev) => prev.filter((n) => n.$id !== payload.$id))
     })
 
     const unsubLinks = client.subscribe(linkChannel, ({ events, payload }) => {
       if (!selectedCase || payload.caseId !== selectedCase.$id) return
-      if (events.includes("create"))
+      if (events.some(e => e.includes(".create")))
         setLinks((prev) => [...prev, payload])
-      if (events.includes("update"))
+      if (events.some(e => e.includes(".update")))
         setLinks((prev) => prev.map((l) => (l.$id === payload.$id ? payload : l)))
-      if (events.includes("delete"))
+      if (events.some(e => e.includes(".delete")))
         setLinks((prev) => prev.filter((l) => l.$id !== payload.$id))
     })
 

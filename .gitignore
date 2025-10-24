@@ -4,6 +4,9 @@
 # Environment Variable File
 .env
 
+# Notes file
+TODO
+
 # dependencies
 node_modules/
 

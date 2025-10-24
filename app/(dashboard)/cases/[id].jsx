@@ -33,7 +33,7 @@ const CaseDetails = () => {
     async function loadCase() {
       const caseData = await fetchCaseById(id)
       setCaseDetail(caseData)
-
+      //setSelectedCase(caseData)
     }
 
     loadCase()
@@ -41,6 +41,7 @@ const CaseDetails = () => {
 
     return () => {
       setCaseDetail(null)
+      //setSelectedCase(null)
     }
   }, [id])
 
