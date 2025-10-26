@@ -18,7 +18,7 @@ const NodeDetails = () => {
   const [ nodeDetail, setNodeDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { links, fetchNodeById, deleteNode } = useCase()
+  const { links, fetchNodeById, deleteNode, selectedCase } = useCase()
   const router = useRouter()
 
 
@@ -26,7 +26,7 @@ const NodeDetails = () => {
   const handleDelete = async () => {
     await deleteNode(id)
     setNodeDetail(null)
-    router.replace('/cases/[id]')
+    router.replace(`/cases/${selectedCase.$id}`)
   }
 
   useEffect(() => {
@@ -82,6 +82,9 @@ const NodeDetails = () => {
 
             <ThemedCard style={styles.card}>
               <ThemedText style={styles.title}>{item.relationship}</ThemedText>
+              <ThemedText style={styles.title}>
+                          {item.sourceNodeId} ➜ {item.targetNodeId}
+              </ThemedText>
             </ThemedCard>
 
         )}
@@ -92,10 +95,6 @@ const NodeDetails = () => {
 
       <View style={styles.buttonContainer}>
       
-        <ThemedButton onPress={() => router.push('/createNode')} style={styles.containedButton}>
-          <Text style={{ color: '#f2f2f2' }}>Add a New Node</Text>
-        </ThemedButton>
-
         <ThemedButton onPress={() => router.push('/createLink')} style={styles.containedButton}>
           <Text style={{ color: '#f2f2f2' }}>Add a New Link</Text>
         </ThemedButton>

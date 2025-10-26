@@ -185,7 +185,7 @@ export function CaseProvider({children}) {
 
       return response 
     } catch (error) {
-      console.log("fetchCaseById: ", error.message)
+      console.log("fetchNodeById: ", error.message)
     }
   }
 
@@ -232,6 +232,20 @@ export function CaseProvider({children}) {
       console.log("createLink: ", error.message)
     }
   } 
+
+    async function fetchLinkById(id) {
+    try {
+      const response = await databases.getDocument(
+        DB_ID,
+        LINKS_ID,
+        id
+      )
+
+      return response 
+    } catch (error) {
+      console.log("fetchLinkById: ", error.message)
+    }
+  }
 
   async function updateLink(id, data) {
 

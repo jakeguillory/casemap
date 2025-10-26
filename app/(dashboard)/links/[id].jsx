@@ -1,4 +1,4 @@
-import { StyleSheet, Text, FlatList, View, Pressable } from "react-native"
+import { StyleSheet, Text, FlatList, View } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
@@ -11,108 +11,95 @@ import ThemedView from "../../../components/ThemedView"
 import Spacer from "../../../components/Spacer"
 import ThemedCard from "../../../components/ThemedCard"
 import ThemedLoader from "../../../components/ThemedCard"
-import ToggleList from "../../../components/ToggleList"
 
 
-const CaseDetails = () => {
+const LinkDetails = () => {
 
-  const [ caseDetail, setCaseDetail ] = useState(null)
+  const [ linkDetail, setLinkDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { fetchCaseById, deleteCase, fetchGraphData, nodes, links, setSelectedCase } = useCase()
+  const { links, deleteLink, fetchLinkById } = useCase()
   const router = useRouter()
 
 
 
   const handleDelete = async () => {
-    await deleteCase(id)
-    setCaseDetail(null)
-    router.replace('/cases')
-    setSelectedCase(null)
+    await deleteLink(id)
+    setLinkDetail(null)
+    router.replace(`/cases/${selectedCase.$id}`)
   }
 
   useEffect(() => {
-    async function loadCase() {
-      const caseData = await fetchCaseById(id)
-      setCaseDetail(caseData)
-      setSelectedCase(caseData)
+    async function loadLink() {
+      const linkData = await fetchLinkById(id)
+      setLinkDetail(nodeData)
     }
 
-    loadCase()
-    fetchGraphData(id)
+    loadLink()
 
     return () => {
-      setCaseDetail(null)
+      setLinkDetail(null)
     }
   }, [id])
 
-  if (!caseDetail) {
+  if (!linkDetail) {
     return (
       <ThemedView safe={true} style={styles.container}>
         <ThemedLoader />
       </ThemedView>
     )
   }
+  
+  
 
   return (
     <ThemedView safe={true} style={styles.container}>
 
-      <View>
-        <ThemedCard style={styles.card}>
+      <ThemedCard style={styles.card}>
 
-          <ThemedText style={styles.title}>{caseDetail.title}</ThemedText>
+        <ThemedText style={styles.title}>{linkDetail.Label}</ThemedText>
 
-          <Spacer height={20}/>
+        <Spacer height={20}/>
 
-          <ThemedText title={true}>Case description:</ThemedText>
+        <ThemedText title={true}>Type:</ThemedText>
 
-          <Spacer height={10} />
+        <Spacer height={10} />
 
-          <ThemedText>{caseDetail.description}</ThemedText>
+        <ThemedText>{nodeDetail.type}</ThemedText>
 
-        </ThemedCard>
-      </View>
+        <Spacer height={10} />
+
+        <ThemedText>{nodeDetail.notes}</ThemedText>
+
+      </ThemedCard>
 
       <Spacer />
 
-      <View>
-        <ToggleList nodes={nodes} links={links} />
-      </View>
 
-{/*
       <FlatList
-        data={nodes}
+        data={links}
         keyExtractor={(item) => item.$id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-            <Pressable onPress={() => {
-                  router.push(`/nodes/${item.$id}`)
-                }}>
 
             <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.label}</ThemedText>
+              <ThemedText style={styles.title}>{item.relationship}</ThemedText>
             </ThemedCard>
-
-          </Pressable>
 
         )}
       />
-*/}
+
 
       <Spacer height={10} />
 
       <View style={styles.buttonContainer}>
       
-        <ThemedButton onPress={() => router.push('/createNode')} style={styles.containedButton}>
-          <Text style={{ color: '#f2f2f2' }}>New Node</Text>
-        </ThemedButton>
-
         <ThemedButton onPress={() => router.push('/createLink')} style={styles.containedButton}>
-          <Text style={{ color: '#f2f2f2' }}>New Link</Text>
+          <Text style={{ color: '#f2f2f2' }}>Add a New Link</Text>
         </ThemedButton>
 
         <ThemedButton onPress={handleDelete} style={[styles.delete, styles.containedButton]}>
-          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Case</Text>
+          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Node</Text>
         </ThemedButton>
 
       </View>
@@ -121,7 +108,7 @@ const CaseDetails = () => {
   )
 }
 
-export default CaseDetails
+export default LinkDetails
 
 const styles = StyleSheet.create({
   container: {
@@ -132,10 +119,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    gap: 10,
     alignSelf: 'center',
-
   },
   containedButton: {
     paddingVertical: 20,
