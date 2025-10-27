@@ -13,22 +13,6 @@ export default function ToggleList({ nodes, links }) {
 
   const router = useRouter()
 
-  /*
-  const nodes = [
-    { id: "1", label: "Boss" },
-    { id: "2", label: "Underboss" },
-    { id: "3", label: "Capo" },
-  ];
-
-  const links = [
-    { id: "1", sourceNodeId: "Boss", targetNodeId: "Underboss" },
-    { id: "2", sourceNodeId: "Underboss", targetNodeId: "Capo" },
-    { id: "3", sourceNodeId: "Underboss", targetNodeId: "Capo" },
-    { id: "4", sourceNodeId: "Underboss", targetNodeId: "Capo" },
-    { id: "5", sourceNodeId: "Underboss", targetNodeId: "Capo" },
-  ];
-  */
-
   const data = showNodes ? nodes : links;
 
   return (
@@ -58,6 +42,8 @@ export default function ToggleList({ nodes, links }) {
       <FlatList
         data={data}
         keyExtractor={(item) => item.$id}
+        contentContainerStyle={{ paddingBottom: 70 }}
+        style={{ flexGrow: 0 }}
         renderItem={({ item }) => (
             <Pressable onPress={() => 
               { router.push(`/${showNodes ? 'nodes' : 'links'}/${item.$id}`)}}>
