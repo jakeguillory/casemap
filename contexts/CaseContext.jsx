@@ -321,7 +321,7 @@ export function CaseProvider({children}) {
     <CaseContext.Provider 
       value={{ cases, selectedCase, setSelectedCase, fetchCases, fetchCaseById,
                createCase, updateCase, deleteCase, nodes, links, createNode, fetchNodeById, updateNode,
-               deleteNode, createLink, updateLink, deleteLink, fetchGraphData, loading, setLoading }}
+               deleteNode, createLink, fetchLinkById, updateLink, deleteLink, fetchGraphData, loading, setLoading }}
     >
       {children}
     </CaseContext.Provider>

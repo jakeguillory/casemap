@@ -1,11 +1,13 @@
+import { node } from "prop-types"
 
 
 
 /*-------------------Need to test and use the following function for Links in ToggleList.jsx ------*/
 export const getNodeLabelFromId = (id, nodes) => {
-    // The is will probably come from a link object i.e.:, link.sourceNodeId
-    // the nodes array is already assumed to be filtered doen by selectedCase, (although it may not matter it could be a performance hindrance)
-    return 
+
+    const node = nodes.find(node => node.$id === id)
+    
+    return node.label
 }
 
 
@@ -20,3 +22,11 @@ export const makeNodeOptions = nodes => {
 
     return nodeOptions
 }
+
+
+export const toTitleCase = str => {
+    if (typeof str !== 'string' || str.length === 0) return ""
+    return str.charAt(0).toUpperCase() + str.slice(1)
+
+}
+

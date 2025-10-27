@@ -1,8 +1,9 @@
-import { StyleSheet, Text, FlatList, View } from "react-native"
+import { StyleSheet, Text, FlatList, View, Pressable } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
 import { Colors } from "../../../constants/Colors"
+import { toTitleCase, getNodeLabelFromId } from "../../../utility/utility"
 
 // themed components
 import ThemedText from "../../../components/ThemedText"
@@ -18,7 +19,7 @@ const NodeDetails = () => {
   const [ nodeDetail, setNodeDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { links, fetchNodeById, deleteNode, selectedCase } = useCase()
+  const { links, fetchNodeById, deleteNode, selectedCase, nodes } = useCase()
   const router = useRouter()
 
 
@@ -59,11 +60,7 @@ const NodeDetails = () => {
 
         <Spacer height={20}/>
 
-        <ThemedText title={true}>Type:</ThemedText>
-
-        <Spacer height={10} />
-
-        <ThemedText>{nodeDetail.type}</ThemedText>
+        <ThemedText title={true}>Type:     {toTitleCase(nodeDetail.type)}</ThemedText>
 
         <Spacer height={10} />
 
@@ -73,23 +70,28 @@ const NodeDetails = () => {
 
       <Spacer />
 
-
       <FlatList
         data={links}
         keyExtractor={(item) => item.$id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
+        contentContainerStyle={{ paddingBottom: 70 }}
+        style={{ flexGrow: 0 }}
+        renderItem={({ item }) => {
+          return (
+              <Pressable onPress={() => {
+                router.push(`/links/${item.$id}`)}}>
+                  <ThemedCard style={styles.card}>
 
-            <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.relationship}</ThemedText>
-              <ThemedText style={styles.title}>
-                          {item.sourceNodeId} ➜ {item.targetNodeId}
-              </ThemedText>
-            </ThemedCard>
-
-        )}
-      />
-
+                          <ThemedText style={styles.title}>
+                            {getNodeLabelFromId(item.sourceNodeId, nodes)} ➜ 
+                            {getNodeLabelFromId(item.targetNodeId, nodes)}
+                          </ThemedText>
+                        
+                  </ThemedCard>
+              </Pressable>
+            )
+          }
+        }
+      />      
 
       <Spacer height={10} />
 
@@ -117,23 +119,32 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   buttonContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    gap: 10,
-    alignSelf: 'center',
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 10,
+    backgroundColor: "transparent",
   },
   containedButton: {
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingHorizontal: 10,
-    alignSelf: 'center'
   },
   title: {
-    fontSize: 22,
-    marginVertical: 10,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   card: {
-    margin: 20
+    width: "90%",
+    marginHorizontal: "5%",
+    marginVertical: 10,
+    padding: 10,
+    paddingLeft: 14,
+    borderLeftColor: Colors.primary,
+    borderLeftWidth: 4
   },
   delete: {
     marginTop: 10,

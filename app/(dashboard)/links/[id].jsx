@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
 import { Colors } from "../../../constants/Colors"
+import { getNodeLabelFromId } from "../../../utility/utility"
 
 // themed components
 import ThemedText from "../../../components/ThemedText"
@@ -18,7 +19,7 @@ const LinkDetails = () => {
   const [ linkDetail, setLinkDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { links, deleteLink, fetchLinkById, nodes } = useCase()
+  const { deleteLink, fetchLinkById, nodes, selectedCase } = useCase()
   const router = useRouter()
 
 
@@ -36,7 +37,6 @@ const LinkDetails = () => {
     }
 
     loadLink()
-    //------------- Add getSourceNodeLabelFromLink or handle like in Create Link
 
     return () => {
       setLinkDetail(null)
@@ -62,45 +62,31 @@ const LinkDetails = () => {
 
         <Spacer height={20}/>
 
-        <ThemedText title={true}>Type:</ThemedText>
+        <ThemedText title={true}>Relationship:   {linkDetail.relationship}</ThemedText>
 
         <Spacer height={10} />
 
-        <ThemedText>{nodeDetail.type}</ThemedText>
-
-        <Spacer height={10} />
-
-        <ThemedText>{nodeDetail.notes}</ThemedText>
+        <ThemedText>
+          {getNodeLabelFromId(linkDetail.sourceNodeId, nodes)} ➜ 
+          {getNodeLabelFromId(linkDetail.targetNodeId, nodes)}
+        </ThemedText>
 
       </ThemedCard>
 
       <Spacer />
 
-
-      <FlatList
-        data={links}
-        keyExtractor={(item) => item.$id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-
-            <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.relationship}</ThemedText>
-            </ThemedCard>
-
-        )}
-      />
-
-
       <Spacer height={10} />
 
       <View style={styles.buttonContainer}>
       
+      {/* ---------------- Make this the Update Functionality
         <ThemedButton onPress={() => router.push('/createLink')} style={styles.containedButton}>
           <Text style={{ color: '#f2f2f2' }}>Add a New Link</Text>
         </ThemedButton>
+      */}
 
         <ThemedButton onPress={handleDelete} style={[styles.delete, styles.containedButton]}>
-          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Node</Text>
+          <Text style={{ color: '#fff', textAlign: 'center' }}>Delete Link</Text>
         </ThemedButton>
 
       </View>

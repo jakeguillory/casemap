@@ -4,6 +4,7 @@ import { Colors } from '../constants/Colors'
 import ThemedCard from "./ThemedCard";
 import ThemedText from "./ThemedText";
 import { useRouter } from "expo-router";
+import { getNodeLabelFromId } from "../utility/utility";
 
 export default function ToggleList({ nodes, links }) {
   const [showNodes, setShowNodes] = useState(true);
@@ -52,7 +53,8 @@ export default function ToggleList({ nodes, links }) {
                         <ThemedText style={styles.title}>{item.label}</ThemedText>
                       ) : (
                         <ThemedText style={styles.title}>
-                          {item.sourceNodeId} ➜ {item.targetNodeId}
+                          {getNodeLabelFromId(item.sourceNodeId, nodes)} ➜ 
+                          {getNodeLabelFromId(item.targetNodeId, nodes)}
                         </ThemedText>
                       ) 
                     }
