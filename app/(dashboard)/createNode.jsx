@@ -70,6 +70,7 @@ const CreateNode = () => {
 
         <ThemedSelect 
           items={typeOptions}
+          placeholder="Type"
           value={type}
           onValueChange={setType}
           

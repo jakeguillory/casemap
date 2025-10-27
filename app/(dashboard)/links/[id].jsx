@@ -18,7 +18,7 @@ const LinkDetails = () => {
   const [ linkDetail, setLinkDetail ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { links, deleteLink, fetchLinkById } = useCase()
+  const { links, deleteLink, fetchLinkById, nodes } = useCase()
   const router = useRouter()
 
 
@@ -32,10 +32,11 @@ const LinkDetails = () => {
   useEffect(() => {
     async function loadLink() {
       const linkData = await fetchLinkById(id)
-      setLinkDetail(nodeData)
+      setLinkDetail(linkData)
     }
 
     loadLink()
+    //------------- Add getSourceNodeLabelFromLink or handle like in Create Link
 
     return () => {
       setLinkDetail(null)

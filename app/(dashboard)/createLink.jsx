@@ -1,7 +1,7 @@
-import { StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { StyleSheet, Text, TouchableWithoutFeedback, Keyboard, View } from 'react-native'
 import { useCase } from "../../hooks/useCase"
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // themed components
 import ThemedView from "../../components/ThemedView"
@@ -9,15 +9,18 @@ import ThemedText from "../../components/ThemedText"
 import ThemedTextInput from "../../components/ThemedTextInput"
 import ThemedButton from '../../components/ThemedButton'
 import Spacer from '../../components/Spacer'
+import ThemedSelect from '../../components/ThemedSelect'
+import { makeNodeOptions } from '../../utility/utility'
 
 
 const CreateLink = () => {
   const [ sourceNodeId, setSourceNodeId ] = useState("")
   const [ targetNodeId, setTargetNodeId ] = useState("")
+  const [nodeOptions, setNodeOptions ] = useState([])
   const [ relationship, setRelationship ] = useState("")
   const [ notes, setNotes ] = useState("")
 
-  const { createLink, loading, setLoading, selectedCase, setSelectedCase } = useCase()
+  const { fetchGraphData, createLink, loading, setLoading, selectedCase, setSelectedCase, nodes } = useCase()
   const router = useRouter()
 
   async function handleSubmit() {
@@ -43,9 +46,15 @@ const CreateLink = () => {
     setLoading(false) 
   }
 
+  useEffect(() => {
+    fetchGraphData(selectedCase) // Sets the node state taken from useCase
+    setNodeOptions(makeNodeOptions(nodes)) 
+
+  }, [selectedCase])
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-      <ThemedView style={styles.container}>
+      <ThemedView style={styles.container} >
 
         <ThemedText title={true} style={styles.heading}>
           Add a New Link
@@ -53,20 +62,21 @@ const CreateLink = () => {
 
         <Spacer />
 
-        <ThemedTextInput
-          style={styles.input}
-          placeholder="Source Node ID"
+        <ThemedSelect 
+          items={nodeOptions}
+          placeholder="Source Node Label"
           value={sourceNodeId}
-          onChangeText={setSourceNodeId}
+          onValueChange={setSourceNodeId}
+          
         />
 
         <Spacer />
 
-        <ThemedTextInput
-          style={styles.input}
-          placeholder="Target Node ID"
+        <ThemedSelect 
+          items={nodeOptions}
+          placeholder="Target Node Label"
           value={targetNodeId}
-          onChangeText={setTargetNodeId}
+          onValueChange={setTargetNodeId}
         />
 
         <Spacer />
@@ -90,11 +100,13 @@ const CreateLink = () => {
 
         <Spacer />
 
-        <ThemedButton onPress={handleSubmit} disabled={loading}>
-          <Text style={{ color: '#fff' }}>
-            {loading ? "Saving..." : "Create Link"}
-          </Text>
-        </ThemedButton>
+        <View>
+          <ThemedButton onPress={handleSubmit} disabled={loading}>
+            <Text style={{ color: '#fff' }}>
+              {loading ? "Saving..." : "Create Link"}
+            </Text>
+          </ThemedButton>
+        </View>
 
       </ThemedView>
     </TouchableWithoutFeedback>

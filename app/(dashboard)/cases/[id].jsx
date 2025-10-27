@@ -79,26 +79,6 @@ const CaseDetails = () => {
         <ToggleList nodes={nodes} links={links} />
       </View>
 
-{/*
-      <FlatList
-        data={nodes}
-        keyExtractor={(item) => item.$id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-            <Pressable onPress={() => {
-                  router.push(`/nodes/${item.$id}`)
-                }}>
-
-            <ThemedCard style={styles.card}>
-              <ThemedText style={styles.title}>{item.label}</ThemedText>
-            </ThemedCard>
-
-          </Pressable>
-
-        )}
-      />
-*/}
-
       <Spacer height={10} />
 
       <View style={styles.buttonContainer}>

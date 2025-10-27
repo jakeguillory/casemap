@@ -47,11 +47,12 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginHorizontal: 40,
     overflow: 'hidden',
+    maxHeight: 150,
 
 
   },
   picker: {
-    paddingVertical: 14,
+    paddingVertical: 0,
     paddingHorizontal: 20,
   },
 })
