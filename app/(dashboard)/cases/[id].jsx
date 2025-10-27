@@ -19,7 +19,7 @@ const CaseDetails = () => {
 
   const [ caseDetail, setCaseDetail ] = useState(null)
   const { id } = useLocalSearchParams()
-  const { fetchCaseById, deleteCase, fetchGraphData, nodes, links, setSelectedCase } = useCase()
+  const { fetchCaseById, deleteCase, fetchGraphData, nodes, links, setSelectedCase, selectedCase } = useCase()
   const router = useRouter()
 
   const handleDelete = async () => {
@@ -37,7 +37,8 @@ const CaseDetails = () => {
     }
 
     loadCase()
-    fetchGraphData(id)
+    fetchGraphData(selectedCase.$id)
+    //fetchGraphData(id)
 
     return () => {
       setCaseDetail(null)

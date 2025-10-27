@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useCase } from "../../../hooks/useCase"
 import { Colors } from "../../../constants/Colors"
-import { toTitleCase, getNodeLabelFromId } from "../../../utility/utility"
+import { toTitleCase, getNodeLabelFromId, filterRelevantLinks } from "../../../utility/utility"
 
 // themed components
 import ThemedText from "../../../components/ThemedText"
@@ -17,14 +17,16 @@ import ThemedLoader from "../../../components/ThemedCard"
 const NodeDetails = () => {
 
   const [ nodeDetail, setNodeDetail ] = useState(null)
+  const [ relevantLinks, setRelevantLinks ] = useState(null)
 
   const { id } = useLocalSearchParams()
-  const { links, fetchNodeById, deleteNode, selectedCase, nodes } = useCase()
+  const { links, fetchNodeById, deleteNode, selectedCase, nodes, deleteLink } = useCase()
   const router = useRouter()
 
-
+  const deleteLinksArr = links => links.forEach(link => deleteLink(link.$id))
 
   const handleDelete = async () => {
+    await deleteLinksArr(relevantLinks)
     await deleteNode(id)
     setNodeDetail(null)
     router.replace(`/cases/${selectedCase.$id}`)
@@ -37,9 +39,11 @@ const NodeDetails = () => {
     }
 
     loadNode()
+    setRelevantLinks(filterRelevantLinks(id, links))
 
     return () => {
       setNodeDetail(null)
+      setRelevantLinks(null)
     }
   }, [id])
 
@@ -71,7 +75,7 @@ const NodeDetails = () => {
       <Spacer />
 
       <FlatList
-        data={links}
+        data={relevantLinks}
         keyExtractor={(item) => item.$id}
         contentContainerStyle={{ paddingBottom: 70 }}
         style={{ flexGrow: 0 }}
@@ -108,6 +112,7 @@ const NodeDetails = () => {
       </View>
 
     </ThemedView>
+
   )
 }
 

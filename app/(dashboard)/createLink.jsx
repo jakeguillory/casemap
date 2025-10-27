@@ -47,7 +47,7 @@ const CreateLink = () => {
   }
 
   useEffect(() => {
-    fetchGraphData(selectedCase) // Sets the node state taken from useCase
+    //fetchGraphData(selectedCase) // Sets the node state taken from useCase
     setNodeOptions(makeNodeOptions(nodes)) 
 
   }, [selectedCase])

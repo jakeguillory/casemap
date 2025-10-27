@@ -13,7 +13,7 @@ import { useUser } from '../../hooks/useUser'
 
 const Cases = () => {
   const { user } = useUser()
-  const { cases, setSelectedCase } = useCase()
+  const { cases, setSelectedCase, selectedCase } = useCase()
   const router = useRouter()
 
 

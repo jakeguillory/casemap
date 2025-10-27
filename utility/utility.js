@@ -1,13 +1,15 @@
-import { node } from "prop-types"
 
+export const getNodeLabelFromId = (nodeId, nodes) => {
 
-
-/*-------------------Need to test and use the following function for Links in ToggleList.jsx ------*/
-export const getNodeLabelFromId = (id, nodes) => {
-
-    const node = nodes.find(node => node.$id === id)
+    const node = nodes.find(node => node.$id === nodeId)
     
-    return node.label
+    return node ? node.label : "Unknown Node"
+}
+
+export const filterRelevantLinks = (nodeId, links) => {
+    const filteredLinks = links.filter(link => link.sourceNodeId == nodeId || link.targetNodeId == nodeId)
+
+    return filteredLinks
 }
 
 
@@ -25,8 +27,10 @@ export const makeNodeOptions = nodes => {
 
 
 export const toTitleCase = str => {
-    if (typeof str !== 'string' || str.length === 0) return ""
-    return str.charAt(0).toUpperCase() + str.slice(1)
 
+    if (typeof str !== 'string' || str.length === 0) return ""
+
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
 

@@ -146,8 +146,6 @@ export function CaseProvider({children}) {
       setLinks(linksRes.documents)
     
 
-      //console.log(nodesRes.documents, linksRes.documents)
-
     } catch (error) {
       console.error("fetchGraphData: ", error.message)
     }
@@ -198,6 +196,7 @@ export function CaseProvider({children}) {
     }
   }
 
+  
   async function deleteNode(id) {
     try {
       await databases.deleteDocument(
@@ -209,6 +208,33 @@ export function CaseProvider({children}) {
       console.log("deleteNode: ", error.message)
     }
   }
+    
+/*
+    // ------ Cascading Delete: remove links first-----
+  async function deleteNode(id) {
+    try {
+      // Fetch and delete and links first
+      // May need some check here in case there are no associated links
+      const linksRes = await databases.listDocuments(DB_ID, LINKS_ID, [Query.and([
+                                                                          Query.equal("sourceNodeId", id),
+                                                                          Query.equal("targetNodeId", id)
+                                                                        ])])
+
+      // Can probably use already defined  deleteLink functions here
+      linksRes.documents.map(async (link) => (
+        await databases.deleteDocument(DB_ID, LINKS_ID, link.$id)))
+
+      // Delete the node
+      await databases.deleteDocument(
+        DB_ID,
+        NODES_ID,
+        id
+      )
+    } catch (error) {
+      console.log("deleteNode: ", error.message)
+    }
+  }
+    */
 
    // ----------------- LINKS ---------------------------
 
