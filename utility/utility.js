@@ -1,9 +1,9 @@
 
 export const getNodeLabelFromId = (nodeId, nodes) => {
 
-    const node = nodes.find(node => node.$id === nodeId)
+    const node = nodes?.find(node => node.$id === nodeId)
     
-    return node ? node.label : "Unknown Node"
+    return node ? node.label : "(unknown)"
 }
 
 export const filterRelevantLinks = (nodeId, links) => {
@@ -11,7 +11,6 @@ export const filterRelevantLinks = (nodeId, links) => {
 
     return filteredLinks
 }
-
 
 export const makeNodeOptions = nodes => {
 
@@ -23,6 +22,20 @@ export const makeNodeOptions = nodes => {
     })
 
     return nodeOptions
+}
+
+export const makeCaseOptions = cases => {
+
+    // Have to use variable name "caseItem" since "case" is a javascript keyword
+
+    const caseOptions = cases.map(caseItem => {
+        return {
+            label: caseItem.title,
+            value: caseItem.$id,
+        }
+    })
+
+    return caseOptions
 }
 
 
