@@ -44,14 +44,7 @@ const Map = () => {
 
   }, [ graphCase ])
 
-  useEffect(() => {
-
-    console.log("Updated Nodes: ", nodes)
-    console.log("Updated links: ", links)
-
-  }, [ nodes, links ])
-
-  
+ 
 
   return (
 
